@@ -25,7 +25,7 @@ export class Restify implements RApi {
      * @param {HttpClient} http
      * @memberof Restify
      */
-    constructor(private config: RConfig = {}, public http: HttpClient) {
+    constructor(private config: RConfig = {}) {
         //
         // Merge restify config
         merge(this, this.config);

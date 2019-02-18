@@ -19,11 +19,11 @@
       "dom"
     ],
     "paths": {
-      "restify": [
-        "dist/restify"
+      "ngx-restify": [
+        "dist/ngx-restify"
       ],
-      "restify/*": [
-        "dist/restify/*"
+      "ngx-restify/*": [
+        "dist/ngx-restify/*"
       ]
     }
   }

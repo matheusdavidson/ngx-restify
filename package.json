@@ -8,8 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:w": "ng build restify --prod --watch",
-    "build:p": "ng build restify --prod"
+    "build:w": "ng build ngx-restify --prod --watch",
+    "build:p": "ng build ngx-restify --prod"
   },
   "private": true,
   "dependencies": {

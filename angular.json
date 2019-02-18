@@ -3,17 +3,17 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "restify": {
-      "root": "projects/restify",
-      "sourceRoot": "projects/restify/src",
+    "ngx-restify": {
+      "root": "projects/ngx-restify",
+      "sourceRoot": "projects/ngx-restify/src",
       "projectType": "library",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/restify/tsconfig.lib.json",
-            "project": "projects/restify/ng-package.json"
+            "tsConfig": "projects/ngx-restify/tsconfig.lib.json",
+            "project": "projects/ngx-restify/ng-package.json"
           },
           "configurations": {
             "production": {}
@@ -22,17 +22,17 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/restify/src/test.ts",
-            "tsConfig": "projects/restify/tsconfig.spec.json",
-            "karmaConfig": "projects/restify/karma.conf.js"
+            "main": "projects/ngx-restify/src/test.ts",
+            "tsConfig": "projects/ngx-restify/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-restify/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/restify/tsconfig.lib.json",
-              "projects/restify/tsconfig.spec.json"
+              "projects/ngx-restify/tsconfig.lib.json",
+              "projects/ngx-restify/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
