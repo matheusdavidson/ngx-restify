@@ -14,6 +14,9 @@
           "options": {
             "tsConfig": "projects/restify/tsconfig.lib.json",
             "project": "projects/restify/ng-package.json"
+          },
+          "configurations": {
+            "production": {}
           }
         },
         "test": {
