@@ -1,6 +1,7 @@
+import { Injector } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { merge, cloneDeep, isFunction, isEmpty, isEqual, omit } from 'lodash';
 import { Observable, PartialObserver } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { RConfig } from './interfaces/r-config';
 import { RStorage } from './interfaces/r-storage';
 import { ROptions } from './interfaces/r-options';
@@ -15,14 +16,20 @@ import { RApi } from './interfaces/r-api';
  * @implements {RApi}
  */
 export class Restify implements RApi {
+    //
+    // Config
     private endpoint: string = null;
     private storage: RStorage = null;
+    private injector: Injector;
+    private http: HttpClient;
+
+    //
+    // Options
     private options: ROptions = {};
 
     /**
      * Creates an instance of Restify.
      * @param {RConfig} [config={}]
-     * @param {HttpClient} http
      * @memberof Restify
      */
     constructor(private config: RConfig = {}) {
@@ -34,6 +41,10 @@ export class Restify implements RApi {
         // Validate config
         const invalidConfig = this.hasInvalidConfig();
         if (invalidConfig) throw new Error(<string>invalidConfig);
+
+        //
+        // Inject things
+        this.http = this.injector.get(HttpClient);
     }
 
     public get(path: string = ''): Observable<any> {
@@ -149,6 +160,10 @@ export class Restify implements RApi {
      * @memberof Restify
      */
     private hasInvalidConfig(): string | boolean {
+        //
+        // Validate injector
+        if (!this.injector) throw new Error('{RESTIFY ERROR}: missing injector instance');
+
         //
         // Validate endpoint
         if (!this.endpoint) return '{RESTIFY ERROR}: endpoint needed';
