@@ -4,12 +4,27 @@ import { HttpClient } from '@angular/common/http';
 import { RConfig } from './interfaces/r-config';
 import { RStorage } from './interfaces/r-storage';
 import { ROptions } from './interfaces/r-options';
+import { RApi } from './interfaces/r-api';
 
-export class Restify {
+/**
+ * Restify
+ *
+ * @description Handle HTTP request for Rest API's on Angular with RxJS and Caching
+ * @export
+ * @class Restify
+ * @implements {RApi}
+ */
+export class Restify implements RApi {
     private endpoint: string = null;
     private storage: RStorage = null;
     private options: ROptions = {};
 
+    /**
+     * Creates an instance of Restify.
+     * @param {RConfig} [config={}]
+     * @param {HttpClient} http
+     * @memberof Restify
+     */
     constructor(private config: RConfig = {}, public http: HttpClient) {
         //
         // Merge restify config
