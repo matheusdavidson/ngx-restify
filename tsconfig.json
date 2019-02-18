@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "restify": [
+        "dist/restify"
+      ],
+      "restify/*": [
+        "dist/restify/*"
+      ]
+    }
   }
 }
