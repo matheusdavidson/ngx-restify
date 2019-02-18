@@ -20,8 +20,7 @@ export class Restify implements RApi {
     // Config
     private endpoint: string = null;
     private storage: RStorage = null;
-    private injector: Injector;
-    private http: HttpClient;
+    private httpClient: HttpClient;
 
     //
     // Options
@@ -44,7 +43,7 @@ export class Restify implements RApi {
 
         //
         // Inject things
-        this.http = this.injector.get(HttpClient);
+        // this.http = this.injector.get(HttpClient);
     }
 
     public get(path: string = ''): Observable<any> {
@@ -61,7 +60,7 @@ export class Restify implements RApi {
         });
     }
 
-    public post(path: string = ''): Observable<any> {
+    public post(path: string = '', data: any = {}): Observable<any> {
         //
         // Get options
         const _options: ROptions = this.getOptions();
@@ -71,11 +70,11 @@ export class Restify implements RApi {
         return new Observable((observer: PartialObserver<any>) => {
             //
             // Run observable
-            this.runObservable(observer, 'post', path, _options);
+            this.runObservable(observer, 'post', path, _options, data);
         });
     }
 
-    public put(path: string = ''): Observable<any> {
+    public put(path: string = '', data: any = {}): Observable<any> {
         //
         // Get options
         const _options: ROptions = this.getOptions();
@@ -85,7 +84,7 @@ export class Restify implements RApi {
         return new Observable((observer: PartialObserver<any>) => {
             //
             // Run observable
-            this.runObservable(observer, 'put', path, _options);
+            this.runObservable(observer, 'put', path, _options, data);
         });
     }
 
@@ -106,6 +105,90 @@ export class Restify implements RApi {
             // Run observable
             this.runObservable(observer, 'delete', path, _options);
         });
+    }
+
+    /**
+     * Set whether to use network for first requests
+     *
+     * @param {boolean} active
+     * @returns
+     * @memberof Restify
+     */
+    public useNetwork(active: boolean) {
+        this.options.useNetwork = active;
+        return this;
+    }
+
+    /**
+     * Set whether to cache network responses
+     *
+     * @param {boolean} active
+     * @returns
+     * @memberof Restify
+     */
+    public saveNetwork(active: boolean) {
+        this.options.saveNetwork = active;
+        return this;
+    }
+
+    /**
+     * Set transform fn for network responses
+     *
+     * @param {(response: RRResponse) => any} transformFn
+     * @returns
+     * @memberof Restify
+     */
+    public transformNetwork(transformFn: (response: any) => any) {
+        this.options.transformNetwork = transformFn;
+        return this;
+    }
+
+    /**
+     * Set cache time to live
+     *
+     * @param {number} value
+     * @returns
+     * @memberof Restify
+     */
+    public ttl(value: number) {
+        this.options.ttl = value;
+        return this;
+    }
+
+    /**
+     * Set whether to use cache for first requests
+     *
+     * @param {boolean} active
+     * @returns
+     * @memberof Restify
+     */
+    public useCache(active: boolean) {
+        this.options.useCache = active;
+        return this;
+    }
+
+    /**
+     * Set transform fn for cache
+     *
+     * @param {(response: RRResponse) => any} transformFn
+     * @returns
+     * @memberof Restify
+     */
+    public transformCache(transformFn: (response: any) => any) {
+        this.options.transformCache = transformFn;
+        return this;
+    }
+
+    /**
+     * Set cache key
+     *
+     * @param {string} name
+     * @returns
+     * @memberof Restify
+     */
+    public key(name: string) {
+        this.options.key = name;
+        return this;
     }
 
     /**
@@ -162,7 +245,7 @@ export class Restify implements RApi {
     private hasInvalidConfig(): string | boolean {
         //
         // Validate injector
-        if (!this.injector) throw new Error('{RESTIFY ERROR}: missing injector instance');
+        if (!this.httpClient) throw new Error('{RESTIFY ERROR}: missing http instance');
 
         //
         // Validate endpoint
@@ -219,7 +302,7 @@ export class Restify implements RApi {
      * @memberof Restify
      */
     private runNetwork(observer: PartialObserver<any>, options: ROptions = {}, path: string, method: string = 'get', data: any = {}) {
-        this.http[method](path, data).subscribe(
+        this.httpClient[method](path, data).subscribe(
             response => {
                 //
                 // Set cache
