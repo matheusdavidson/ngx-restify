@@ -306,7 +306,7 @@ export class Restify implements RApi {
             response => {
                 //
                 // Set cache
-                this.setCache(observer, options);
+                this.setCache(observer, options, response);
 
                 return;
             },
