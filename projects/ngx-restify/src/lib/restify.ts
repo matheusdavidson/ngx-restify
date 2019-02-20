@@ -46,6 +46,33 @@ export class Restify implements RApi {
         // this.http = this.injector.get(HttpClient);
     }
 
+    public set(id: string = null, model: any = {}, path: any = '', primaryKey: string = null): Observable<any> {
+        //
+        // Get options
+        const _options: ROptions = this.getOptions();
+
+        //
+        // Force options
+        _options.useNetwork = true;
+        _options.useCache = false;
+
+        //
+        // Set data
+        const data = {
+            model: model,
+            id: id,
+            primaryKey: primaryKey
+        };
+
+        //
+        // Create observable
+        return new Observable((observer: PartialObserver<any>) => {
+            //
+            // Run observable
+            this.runObservable(observer, 'put', path, _options, data);
+        });
+    }
+
     public get(path: string = ''): Observable<any> {
         //
         // Get options
