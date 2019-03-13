@@ -21,10 +21,13 @@ export class Restify implements RApi {
     private endpoint: string = null;
     private storage: RStorage = null;
     private httpClient: HttpClient;
+    private defaultOptions: ROptions = {
+        saveNetwork: true
+    };
 
     //
     // Options
-    private options: ROptions = {};
+    private options: ROptions = this.defaultOptions;
 
     /**
      * Creates an instance of Restify.
@@ -52,6 +55,10 @@ export class Restify implements RApi {
         const _options: ROptions = this.getOptions();
 
         //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + path + id;
+
+        //
         // Force options
         _options.useNetwork = true;
         _options.useCache = false;
@@ -70,6 +77,32 @@ export class Restify implements RApi {
             //
             // Run observable
             this.runObservable(observer, 'put', path, _options, data);
+        });
+    }
+
+    public find(filters: any = {}, path: any = 'find'): Observable<any> {
+        //
+        // Get options
+        const _options: ROptions = this.getOptions();
+
+        //
+        // Set data
+        const data = filters;
+
+        //
+        // Set where query
+        data.query = _options.query;
+
+        //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + path + `/${JSON.stringify(data)}`;
+
+        //
+        // Create observable
+        return new Observable((observer: PartialObserver<any>) => {
+            //
+            // Run observable
+            this.runObservable(observer, 'post', path, _options, data);
         });
     }
 
@@ -93,6 +126,10 @@ export class Restify implements RApi {
         const _options: ROptions = this.getOptions();
 
         //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + path + `/${JSON.stringify(data)}`;
+
+        //
         // Create observable
         return new Observable((observer: PartialObserver<any>) => {
             //
@@ -105,6 +142,10 @@ export class Restify implements RApi {
         //
         // Get options
         const _options: ROptions = this.getOptions();
+
+        //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + path + `/${JSON.stringify(data)}`;
 
         //
         // Create observable
@@ -219,13 +260,42 @@ export class Restify implements RApi {
     }
 
     /**
+     * Set request where
+     *
+     * @param {string} field
+     * @param {string} operator
+     * @param {any} value
+     * @returns
+     * @memberof Restify
+     */
+    public where(field: string, operator: string, value: any) {
+        //
+        // Validate query
+        if (isEmpty(this.options.query)) {
+            this.options.query = [];
+        }
+
+        //
+        // Push to query
+        this.options.query.push({
+            field: field,
+            operator: operator,
+            value: value
+        });
+
+        //
+        // Return chain
+        return this;
+    }
+
+    /**
      * Reset
      *
      * @private
      * @memberof Restify
      */
     private reset(): void {
-        this.options = {};
+        this.options = this.defaultOptions;
     }
 
     /**
@@ -313,7 +383,7 @@ export class Restify implements RApi {
         if (options.useNetwork) {
             this.runNetwork(observer, options, path, method, data);
         } else {
-            this.getCache(observer, options);
+            const cache = this.getCache(observer, options, path, method, data);
         }
     }
 
@@ -357,7 +427,7 @@ export class Restify implements RApi {
      * @returns
      * @memberof Restify
      */
-    private async getCache(observer: PartialObserver<any>, options: ROptions = {}) {
+    private async getCache(observer: PartialObserver<any>, options: ROptions = {}, path: string, method: string = 'get', data: any = {}) {
         //
         // Get current cache
         const cache: any /*RRResponse*/ & { ttl: number } = await this.storage.get(options.key);
@@ -368,20 +438,22 @@ export class Restify implements RApi {
 
         //
         // Return cached response emmediately to view
-        if (options.useCache && cache && !isEmpty(cache.data)) observer.next(transformNetwork(cache));
+        if (options.useCache && cache && !isEmpty(cache.data)) {
+            observer.next(transformNetwork(cache));
+        }
 
         //
         // Return TTL and skip network ?
         const seconds = new Date().getTime() / 1000 /*/ 60 / 60 / 24 / 365*/;
         if (options.useCache && (cache && seconds < cache.ttl) && !isEmpty(cache.data)) {
-            // console.log(`dont call network`);
+            console.log(`dont call network`);
             observer.complete();
             return false;
         }
 
         //
         // No TTL, normal call
-        return true;
+        return this.runNetwork(observer, options, path, method, data);
     }
 
     /**
@@ -423,6 +495,7 @@ export class Restify implements RApi {
                 // set cache response
                 ttl += seconds;
                 networkResponse.ttl = ttl;
+
                 this.storage.set(
                     options.key,
                     transformCache(omit(networkResponse, ['config', 'request', 'response.config', 'response.data', 'response.request']))

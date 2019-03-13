@@ -7,6 +7,12 @@ import { Observable } from 'rxjs';
  * @interface RApi
  */
 export interface RApi {
+
+    //
+    // Blueprints
+    set(id: string, model: any, path: any, primaryKey: string): Observable<any>;
+    find(filters: any, path: any): Observable<any>;
+
     //
     // HTTP
     get(path: string): Observable<any>;
@@ -23,4 +29,5 @@ export interface RApi {
     useCache(active: boolean);
     transformCache(transformFn: (response: any) => any);
     key(name: string);
+    where(field: string, operator: string, value: any);
 }
