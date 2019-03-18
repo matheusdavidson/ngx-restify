@@ -22,7 +22,8 @@ export class Restify implements RApi {
     private storage: RStorage = null;
     private httpClient: HttpClient;
     private defaultOptions: ROptions = {
-        saveNetwork: true
+        saveNetwork: true,
+        query: []
     };
 
     //
@@ -295,7 +296,7 @@ export class Restify implements RApi {
      * @memberof Restify
      */
     private reset(): void {
-        this.options = this.defaultOptions;
+        this.options = cloneDeep(this.defaultOptions);
     }
 
     /**
@@ -505,7 +506,7 @@ export class Restify implements RApi {
 
         //
         // Force network return
-        else if (options.useNetwork) {
+        else {
             observer.next(transformNetwork(networkResponse));
         }
 
