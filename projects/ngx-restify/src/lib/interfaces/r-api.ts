@@ -12,6 +12,8 @@ export interface RApi {
     // Blueprints
     set(id: string, model: any, path: any, primaryKey: string): Observable<any>;
     find(filters: any, path: any): Observable<any>;
+    findOne(filters: any, path: any): Observable<any>;
+    toggle(id: string, filters: any, path: any): Observable<any>;
 
     //
     // HTTP
