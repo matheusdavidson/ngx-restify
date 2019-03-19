@@ -133,6 +133,41 @@ export class Restify implements RApi {
         });
     }
 
+    public toggle(id: string = null, filters: any = {}, path: string = 'toggle'): Observable<any> {
+        //
+        // Get options
+        const _options: ROptions = this.getOptions();
+
+        //
+        // Set path
+        const _path = `${id}/${path}`;
+
+        //
+        // Set data
+        const data = filters;
+
+        //
+        // Set where query
+        data.query = _options.query;
+
+        //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + _path + `/${JSON.stringify(data)}`;
+
+        //
+        // Force options
+        _options.useNetwork = true;
+        _options.useCache = false;
+
+        //
+        // Create observable
+        return new Observable((observer: PartialObserver<any>) => {
+            //
+            // Run observable
+            this.runObservable(observer, 'post', _path, _options, data);
+        });
+    }
+
     public get(path: string = ''): Observable<any> {
         //
         // Get options
