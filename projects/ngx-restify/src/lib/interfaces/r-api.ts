@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 /**
  * Public Restify API
@@ -17,7 +18,7 @@ export interface RApi {
 
     //
     // HTTP
-    get(path: string): Observable<any>;
+    get(path: string, data: HttpParams): Observable<any>;
     post(path: string, data: any): Observable<any>;
     put(path: string, data: any): Observable<any>;
     delete(path: string): Observable<any>;

@@ -1,5 +1,5 @@
 import { Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { merge, cloneDeep, isFunction, isEmpty, isEqual, omit } from 'lodash';
 import { Observable, PartialObserver } from 'rxjs';
 import { RConfig } from './interfaces/r-config';
@@ -168,17 +168,26 @@ export class Restify implements RApi {
         });
     }
 
-    public get(path: string = ''): Observable<any> {
+    public get(path: string = '', params: HttpParams = null): Observable<any> {
         //
         // Get options
         const _options: ROptions = this.getOptions();
+
+        //
+        // Set data
+        const data = params ? params : {};
+        const dataString = params ? params.toString() : '';
+
+        //
+        // Define an unique key
+        _options.key = _options.key || this.endpoint + path + `/${dataString}`;
 
         //
         // Create observable
         return new Observable((observer: PartialObserver<any>) => {
             //
             // Run observable
-            this.runObservable(observer, 'get', path, _options);
+            this.runObservable(observer, 'get', path, _options, data);
         });
     }
 
