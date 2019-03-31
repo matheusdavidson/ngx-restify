@@ -22,6 +22,7 @@ export class Restify implements RApi {
     private storage: RStorage = null;
     private httpClient: HttpClient;
     private defaultOptions: ROptions = {
+        useCache: true,
         saveNetwork: true,
         query: []
     };
