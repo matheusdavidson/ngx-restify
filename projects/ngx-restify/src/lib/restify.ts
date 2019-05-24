@@ -29,7 +29,7 @@ export class Restify implements RApi {
 
     //
     // Options
-    private options: ROptions = this.defaultOptions;
+    private options: ROptions = cloneDeep(this.defaultOptions);
 
     /**
      * Creates an instance of Restify.
